@@ -908,7 +908,7 @@
     },
     {
       "name": "sass",
-      "allowedCategories": [ "examples", "production" ]
+      "allowedCategories": [ "examples", "production", "tools" ]
     },
     {
       "name": "sass-loader",

@@ -80,7 +80,7 @@ describe("Pivot Table Aggregations menu", () => {
         const element = table.getMeasureCellHeader(0).eq(2);
         clickAggregationMenu(element);
 
-        table.waitLoaded();
+        table.waitRowLoaded();
 
         table.getPivotTableFooterCell(0, 0).contains("Sum");
 
@@ -92,6 +92,8 @@ describe("Pivot Table Aggregations menu", () => {
             cy.wrap($elem.text()).should("not.match", nonEmptyValue);
         });
 
+        table.waitRowLoaded();
+
         table.getPivotTableFooterCell(1, 0).should("not.exist");
     });
 
@@ -102,7 +104,7 @@ describe("Pivot Table Aggregations menu", () => {
         const element = table.getMeasureGroupCell(0).eq(0);
         clickAggregationMenu(element);
 
-        table.waitLoaded();
+        table.waitRowLoaded();
 
         table.getPivotTableFooterCell(0, 0).contains("Sum");
 
@@ -117,6 +119,8 @@ describe("Pivot Table Aggregations menu", () => {
         const element2 = table.getMeasureGroupCell(0).eq(0);
         clickAggregationMenu(element2);
 
+        table.waitRowLoaded();
+
         table.getPivotTableFooterCell(0, 0).should("not.exist");
     });
 
@@ -127,7 +131,7 @@ describe("Pivot Table Aggregations menu", () => {
         const element = table.getMeasureGroupCell(0).eq(0);
         clickAggregationMenu(element);
 
-        table.waitLoaded();
+        table.waitRowLoaded();
 
         table.getPivotTableFooterCell(0, 0).contains("Sum");
 
@@ -142,8 +146,12 @@ describe("Pivot Table Aggregations menu", () => {
         const element1 = table.getMeasureCellHeader(0).eq(3);
         clickAggregationMenu(element1);
 
+        table.waitRowLoaded();
+
         const element2 = table.getMeasureCellHeader(1).eq(3);
         clickAggregationMenu(element2);
+
+        table.waitRowLoaded();
 
         table.getPivotTableFooterCell(0, 0).should("not.exist");
     });

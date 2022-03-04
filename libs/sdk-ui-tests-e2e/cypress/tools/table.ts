@@ -25,6 +25,11 @@ export class Table {
         return this;
     }
 
+    public waitRowLoaded(): this {
+        this.getElement().find(".s-loading").should("not.exist");
+        return this;
+    }
+
     click(rowIndex: number, columnIndex: number): void {
         this.waitLoaded();
 

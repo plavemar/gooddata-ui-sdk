@@ -66,8 +66,10 @@ export class Table {
         this.getElement().find(".ag-center-cols-viewport").scrollTo(position);
     }
 
-    getMeasureCellHeader(index: number) {
-        return this.getElement().find(`.s-table-measure-column-header-cell-${index}`);
+    getMeasureCellHeader(cellIndex: number, index: number) {
+        return this.getElement().find(
+            `.s-table-measure-column-header-cell-${cellIndex}.s-table-measure-column-header-index-${index}`,
+        );
     }
 
     getMeasureGroupCell(index: number) {
@@ -75,6 +77,12 @@ export class Table {
     }
 
     getPivotTableFooterCell(row: number, column: number) {
-        return this.getElement().find(`[row-index="b-${row}"] .s-cell-${row}-${column}`);
+        return this.getElement().find(`[row-index="b-${row}"]`).find(`.s-cell-${row}-${column}`);
+    }
+
+    existPivotTableFooterRow(row: number, exist: boolean) {
+        return this.getElement()
+            .find(`[row-index="b-${row}"]`)
+            .should(exist ? "exist" : "not.exist");
     }
 }

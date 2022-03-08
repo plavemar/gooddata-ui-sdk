@@ -59,15 +59,19 @@ describe("Pivot Table Aggregations menu", () => {
         const table = new Table(".s-pivot-table-aggregations-menu");
         table.waitLoaded();
 
-        //do cell hover
-        table.getMeasureCellHeader(0, 2).realHover().wait(100);
-
         //check exist sort icon
-        table.getMeasureCellHeader(0, 2).find(".s-sort-direction-arrow").should("exist");
+        table
+            .getMeasureCellHeader(0, 2)
+            .realHover()
+            .wait(100)
+            .find(".s-sort-direction-arrow")
+            .should("exist");
 
         //check exist menu
         table
             .getMeasureCellHeader(0, 2)
+            .realHover()
+            .wait(300)
             .find(".s-table-header-menu")
             .should("exist")
             .should("have.class", "gd-pivot-table-header-menu--show");
@@ -134,31 +138,26 @@ describe("Pivot Table Aggregations menu", () => {
 
         table.waitRowLoaded();
 
-        table
-            .getPivotTableFooterCell(0, 0)
-            .find(`.s-value`)
-            .then(function ($elem) {
-                cy.wrap($elem).should("have.text", "Sum");
-            });
+        table.getPivotTableFooterCell(0, 0).find(`.s-value`).should("have.text", "Sum");
 
         table
             .getPivotTableFooterCell(0, 2)
             .find(`.s-value`)
-            .then(function ($elem) {
-                cy.wrap($elem.text()).should("match", nonEmptyValue);
+            .invoke("text")
+            .then((text) => {
+                expect(text).match(nonEmptyValue);
             });
 
         table
             .getPivotTableFooterCell(0, 3)
             .find(`.s-value`)
-            .then(function ($elem) {
-                cy.wrap($elem.text()).should("match", nonEmptyValue);
+            .invoke("text")
+            .then((text) => {
+                expect(text).match(nonEmptyValue);
             });
 
         const element2 = table.getMeasureGroupCell(0).eq(0);
         clickAggregationMenu(element2);
-
-        table.waitRowLoaded();
 
         table.existPivotTableFooterRow(0, false);
     });
@@ -172,36 +171,29 @@ describe("Pivot Table Aggregations menu", () => {
 
         table.waitRowLoaded();
 
-        table
-            .getPivotTableFooterCell(0, 0)
-            .find(`.s-value`)
-            .then(function ($elem) {
-                cy.wrap($elem).should("have.text", "Sum");
-            });
+        table.getPivotTableFooterCell(0, 0).find(`.s-value`).should("have.text", "Sum");
 
         table
             .getPivotTableFooterCell(0, 2)
             .find(`.s-value`)
-            .then(function ($elem) {
-                cy.wrap($elem.text()).should("match", nonEmptyValue);
+            .invoke("text")
+            .then((text) => {
+                expect(text).match(nonEmptyValue);
             });
 
         table
             .getPivotTableFooterCell(0, 3)
             .find(`.s-value`)
-            .then(function ($elem) {
-                cy.wrap($elem.text()).should("match", nonEmptyValue);
+            .invoke("text")
+            .then((text) => {
+                expect(text).match(nonEmptyValue);
             });
 
         const element1 = table.getMeasureCellHeader(0, 2);
         clickAggregationMenu(element1);
 
-        table.waitRowLoaded();
-
         const element2 = table.getMeasureCellHeader(1, 3);
         clickAggregationMenu(element2);
-
-        table.waitRowLoaded();
 
         table.existPivotTableFooterRow(0, false);
     });

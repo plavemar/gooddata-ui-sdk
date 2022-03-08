@@ -27,6 +27,7 @@ export class Table {
 
     public waitRowLoaded(): this {
         this.getElement().find(".s-loading").should("not.exist");
+        cy.wait(200);
         return this;
     }
 
@@ -77,11 +78,17 @@ export class Table {
     }
 
     getPivotTableFooterCell(row: number, column: number) {
-        return this.getElement().find(`[row-index="b-${row}"]`).find(`.s-cell-${row}-${column}`);
+        return this.getElement()
+            .find(".ag-floating-bottom")
+            .find(".ag-floating-bottom-viewport")
+            .find(`[row-index="b-${row}"]`)
+            .find(`.s-cell-${row}-${column}`);
     }
 
     existPivotTableFooterRow(row: number, exist: boolean) {
         return this.getElement()
+            .find(".ag-floating-bottom")
+            .find(".ag-floating-bottom-viewport")
             .find(`[row-index="b-${row}"]`)
             .should(exist ? "exist" : "not.exist");
     }

@@ -22,6 +22,8 @@ const libsToBeRemoved = [
     "sdk-ui-tests-e2e",
 ];
 
+
+
 function main() {
     // parse arguments
     let version = "";
@@ -140,6 +142,7 @@ async function buildVersion(versionName, dev, shouldUpdateSymlink, onSuccess) {
 
     await rm(apiDocDirDocs, { recursive: true, force: true });
     await mkdir(apiDocInputDir, { recursive: true });
+    await mkdir(apiDocDirDocs, { recursive: true });
 
     await writeJson(versionFile, { version: versionName });
 
@@ -156,7 +159,9 @@ async function buildVersion(versionName, dev, shouldUpdateSymlink, onSuccess) {
 
     // Copy all the api-extractor outputs to an input folder
     // native node does not have globs...
-    await exec(`cp ${rootDir}/libs/*/temp/*.api.json "${apiDocInputDir}"`);
+    await exec(`cp ${rootDir}/libs/sdk-ui-dashboard/docs/*.md "${apiDocDirDocs}"`);
+    await exec(`cp ${rootDir}/libs/sdk-ui-dashboard/docs/classes/*.md "${apiDocDirDocs}"`);
+    await exec(`cp ${rootDir}/libs/sdk-ui-dashboard/docs/interfaces/*.md "${apiDocDirDocs}"`);
 
     // Remove packages that are not "ready" for the apidocs yet
     console.log("Starting docs input sanitization");
@@ -171,13 +176,13 @@ async function buildVersion(versionName, dev, shouldUpdateSymlink, onSuccess) {
     );
 
     console.log("Starting api-documenter. Generated files will be stored in apidocs/docs.");
-    const apiDocumenterBin = path.resolve(
-        rootDir,
-        "common/temp/node_modules/@microsoft/api-documenter/bin/api-documenter",
-    );
-    await exec(
-        `"${apiDocumenterBin}" markdown --input-folder "${apiDocInputDir}" --output-folder "${apiDocDirDocs}"`,
-    );
+    // const apiDocumenterBin = path.resolve(
+        // rootDir,
+        // "common/temp/node_modules/@microsoft/api-documenter/bin/api-documenter",
+    // );
+    // await exec(
+        // `"${apiDocumenterBin}" markdown --input-folder "${apiDocInputDir}" --output-folder "${apiDocDirDocs}"`,
+    // );
 
     // Make the api-documenter output compatible with docusaurus
     // - add frontmatter
@@ -190,27 +195,36 @@ async function buildVersion(versionName, dev, shouldUpdateSymlink, onSuccess) {
             const fullFilePath = path.resolve(apiDocDirDocs, file);
             const fileNameWithoutExtension = path.basename(file, ".md");
             const splitFileName = fileNameWithoutExtension.split(".");
-            const packageName = splitFileName[0];
+            // const packageName = splitFileName[0];
             const fileContents = await readFile(fullFilePath, { encoding: "utf8" });
 
-            // get title for the left menu - the first ## heading value
-            const title = /##\s+(.*)/.exec(fileContents)[1];
+            // Read package name from the file content
+            const pkgNameStartIndex = fileContents.indexOf("sdk-");
+            const pkgNameEndIndex = fileContents.indexOf("]", pkgNameStartIndex);
+            const packageName = fileContents.substring(pkgNameStartIndex, pkgNameEndIndex);
+        
+
+            // get title for the left menu - the first # heading value
+            const title = /#\s+(.*)/.exec(fileContents)[1].split(" ")[1];
+
+            const finalTitle = fileNameWithoutExtension === "modules" ? `Overview of ${packageName}` : title;
+            console.log("final title:", finalTitle);
 
             // then strip any thing up to the last dot and after the first following space
             // for example from
             // IAnalyticalBackend.authenticate() method
             // make
             // authenticate()
-            const dotIndex = title.indexOf(".");
-            const memberTitle = dotIndex >= 0 ? title.substr(dotIndex + 1) : title;
+            // const dotIndex = title.indexOf(".");
+            // const memberTitle = dotIndex >= 0 ? title.substr(dotIndex + 1) : title;
 
-            const spaceIndex = memberTitle.indexOf(" ");
-            let finalTitle = spaceIndex >= 0 ? memberTitle.substr(0, spaceIndex) : memberTitle;
+            // const spaceIndex = memberTitle.indexOf(" ");
+            // let finalTitle = spaceIndex >= 0 ? memberTitle.substr(0, spaceIndex) : memberTitle;
 
             // zero level deep: these are the overview files - change their title
-            if (splitFileName.length === 1) {
-                finalTitle = `Overview of ${finalTitle}`;
-            }
+            // if (splitFileName.length === 1) {
+            //     finalTitle = `Overview of ${finalTitle}`;
+            // }
 
             // update the md file with front matter and sanitize it for docusaurus
             const newFileContent = getFrontMatter(fileNameWithoutExtension, finalTitle) + fileContents;
@@ -225,7 +239,10 @@ async function buildVersion(versionName, dev, shouldUpdateSymlink, onSuccess) {
 
             // return data for the sidebar
             // only items that are one level deep are eligible for sidebar entry
-            return splitFileName.length === 2 ? [packageName, fileNameWithoutExtension] : undefined;
+            if(finalTitle !== undefined) {
+                return [packageName, fileNameWithoutExtension]
+            }
+            return undefined;
         }),
     );
 

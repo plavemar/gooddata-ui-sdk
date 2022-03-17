@@ -58,6 +58,7 @@
         "dep-cruiser-ci": "depcruise --validate .dependency-cruiser.js --output-type err-long src/",
         "stylelint": "stylelint '**/*.scss'",
         "stylelint-ci": "stylelint '**/*.scss' --custom-formatter=node_modules/stylelint-checkstyle-formatter > ./ci/results/stylelint-results.xml",
+        "typedoc": "typedoc --out docs --entryPoints ./src/index.ts --tsconfig tsconfig.build.json --plugin typedoc-plugin-markdown --excludeInternal --exclude '**/*+(.test|.spec).ts' --hideInPageTOC",
         "validate": "npm run dep-cruiser && npm run eslint && npm run stylelint && npm run prettier-check",
         "validate-ci": "npm run dep-cruiser-ci && npm run eslint-ci && npm run stylelint-ci && npm run prettier-check"
     },
@@ -147,6 +148,8 @@
         "svgo": "^2.8.0",
         "ts-jest": "^27.0.5",
         "typescript": "4.0.2",
-        "eslint-plugin-tsdoc": "^0.2.14"
+        "eslint-plugin-tsdoc": "^0.2.14",
+        "typedoc": "^0.22.13",
+        "typedoc-plugin-markdown": "~3.11.14"
     }
 }

@@ -1031,6 +1031,10 @@
       "allowedCategories": [ "examples", "production", "tools" ]
     },
     {
+      "name": "typedoc",
+      "allowedCategories": [ "production" ]
+    },
+    {
       "name": "typescript",
       "allowedCategories": [ "examples", "production", "tools" ]
     },
